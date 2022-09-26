@@ -7,6 +7,7 @@ import 'package:shop_apps/screens/profile/profile_screen.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:shop_apps/screens/sign_in/sign_in_screen.dart';
 
 import '../../../constants.dart';
 import '../../../size_config.dart';
@@ -46,10 +47,18 @@ class _SignUpFormState extends State<SignUpForm> {
       "passwd": passwd,
     };
 
-    var res = await http.post(
-        Uri.parse("http://192.168.10.94:5000/register_mobile"),
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-        body: jsonEncode(data));
+    try {
+      var res = await http.post(
+          Uri.parse("http://192.168.10.94:5000/register_mobile"),
+          headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+          body: jsonEncode(data));
+      if (res.statusCode == 200) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SignInScreen()));
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
