@@ -3,11 +3,16 @@ import 'package:shop_apps/components/custom_surfix_icon.dart';
 import 'package:shop_apps/components/form_error.dart';
 import 'package:shop_apps/helper/keyboard.dart';
 import 'package:shop_apps/screens/forgot_password/forgot_password_screen.dart';
+import 'package:shop_apps/screens/home/home_screen.dart';
 import 'package:shop_apps/screens/login_success/login_success_screen.dart';
 
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
+
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 
 class SignForm extends StatefulWidget {
   @override
@@ -33,6 +38,27 @@ class _SignFormState extends State<SignForm> {
       setState(() {
         errors.remove(error);
       });
+  }
+
+    _sginin(email, passwd) async {
+    var data = {
+      "email": email,
+      "passwd": passwd,
+    };
+
+    try {
+      var res = await http.post(
+          Uri.parse("http://192.168.10.94:5000/sign_in_mobile"),
+          headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+          body: jsonEncode(data));
+          
+      if (res.statusCode == 200) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => LoginSuccessScreen()));
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -85,10 +111,11 @@ class _SignFormState extends State<SignForm> {
                 // if all are valid then go to success screen
                 KeyboardUtil.hideKeyboard(context);
                 // Navigator.pushNamed(context, LoginSuccessScreen.routeName);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginSuccessScreen()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => LoginSuccessScreen()),
+                // );
+                _sginin(email, password);
               }
             },
           ),
